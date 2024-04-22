@@ -2,7 +2,7 @@
 	heap
 	This question requires you to implement a binary heap function
 */
-// I AM NOT DONE
+
 
 use std::cmp::Ord;
 use std::default::Default;
@@ -38,6 +38,13 @@ where
 
     pub fn add(&mut self, value: T) {
         //TODO
+        self.items.push(value);
+        self.count += 1;
+        let mut idx = self.count;
+        while idx/2>0 && (self.comparator)(&self.items[idx],&self.items[idx/2]){
+            self.items.swap(idx/2,idx);
+            idx /= 2;
+        }
     }
 
     fn parent_idx(&self, idx: usize) -> usize {
@@ -58,7 +65,13 @@ where
 
     fn smallest_child_idx(&self, idx: usize) -> usize {
         //TODO
-		0
+		let lf = self.left_child_idx(idx);
+        let rf = self.right_child_idx(idx);
+        if rf > self.count || (self.comparator)(&self.items[rf],&self.items[lf]){
+            rf
+        }else{
+            lf
+        }
     }
 }
 
@@ -85,7 +98,21 @@ where
 
     fn next(&mut self) -> Option<T> {
         //TODO
-		None
+        if self.is_empty(){
+            return None;
+        }
+        let mut res =self.items.swap_remove(1); 
+        self.count-=1;
+        loop{
+            let mut idx = 1;
+            let mut next_idx = self.smallest_child_idx(idx);
+            if next_idx > self.count || (self.comparator)(&self.items[idx],&self.items[next_idx]){
+                break;
+            }
+            self.items.swap(idx,next_idx);
+            idx = next_idx;
+        }
+		Some(res)
     }
 }
 
